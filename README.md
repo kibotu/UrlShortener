@@ -11,7 +11,7 @@ Shortens url using [google shortener service](https://developers.google.com/url-
 
        <string name="google_api_key">my-google-api-key</string>
 
-2) [Request shortened url]( (https://github.com/kibotu/UrlShortener/blob/master/app/src/main/java/net/kibotu/urlshortener/app/MainActivity.java#L21-L26))
+2) [Request shortened url](https://github.com/kibotu/UrlShortener/blob/master/app/src/main/java/net/kibotu/urlshortener/app/MainActivity.java#L21-L26)
 
        UrlShortener.shortenUrl(this, "http://www.google.com")
                     .subscribeOn(Schedulers.newThread())
