@@ -9,33 +9,36 @@ import retrofit2.converter.gson.GsonConverterFactory
 import rx.Observable
 import java.util.concurrent.TimeUnit
 
-object UrlShortener {
+class UrlShortener {
 
-    fun shortenUrl(context: Context, url: String): Observable<ResponseModel> {
-        return createNetworkServiceVideo(context).shortenUrl(context.getString(R.string.google_api_key), RequestModel(url))
-    }
+    companion object {
 
-    private fun createNetworkServiceVideo(context: Context): GoogleService {
+        @JvmStatic fun shortenUrl(context: Context, url: String): Observable<ResponseModel> {
+            return createNetworkServiceVideo(context).shortenUrl(context.getString(R.string.google_api_key), RequestModel(url))
+        }
 
-        val interceptor = HttpLoggingInterceptor()
-        interceptor.level = if (BuildConfig.DEBUG)
-            HttpLoggingInterceptor.Level.BODY
-        else
-            HttpLoggingInterceptor.Level.NONE
+        private fun createNetworkServiceVideo(context: Context): GoogleService {
 
-        val client = OkHttpClient.Builder()
-                .readTimeout(60, TimeUnit.SECONDS)
-                .connectTimeout(60, TimeUnit.SECONDS)
-                .addInterceptor(interceptor)
-                .build()
+            val interceptor = HttpLoggingInterceptor()
+            interceptor.level = if (BuildConfig.DEBUG)
+                HttpLoggingInterceptor.Level.BODY
+            else
+                HttpLoggingInterceptor.Level.NONE
 
-        val retrofit = Retrofit.Builder()
-                .baseUrl(context.getString(R.string.base_url))
-                .client(client)
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .build()
+            val client = OkHttpClient.Builder()
+                    .readTimeout(60, TimeUnit.SECONDS)
+                    .connectTimeout(60, TimeUnit.SECONDS)
+                    .addInterceptor(interceptor)
+                    .build()
 
-        return retrofit.create(GoogleService::class.java)
+            val retrofit = Retrofit.Builder()
+                    .baseUrl(context.getString(R.string.base_url))
+                    .client(client)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                    .build()
+
+            return retrofit.create(GoogleService::class.java)
+        }
     }
 }

@@ -18,7 +18,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        UrlShortener.INSTANCE.shortenUrl(this, "http://www.google.com")
+        UrlShortener.shortenUrl(this, "http://www.google.com")
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(r -> {
