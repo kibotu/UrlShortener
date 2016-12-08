@@ -5,13 +5,13 @@
 
 Shortens url using [google shortener service](https://developers.google.com/url-shortener/).
 
-## [How to use](https://github.com/kibotu/UrlShortener/blob/master/app/src/main/java/net/kibotu/urlshortener/app/MainActivity.java#L21-L26)
+## How to use
 
 1) Update [Google Api Key](https://developers.google.com/url-shortener/v1/getting_started#APIKey) in your [string.xml](https://github.com/kibotu/UrlShortener/blob/master/lib/src/main/res/values/strings.xml)
 
        <string name="google_api_key">my-google-api-key</string>
 
-2) Request shortened url
+2) [Request shortened url]( (https://github.com/kibotu/UrlShortener/blob/master/app/src/main/java/net/kibotu/urlshortener/app/MainActivity.java#L21-L26))
 
        UrlShortener.shortenUrl(this, "http://www.google.com")
                     .subscribeOn(Schedulers.newThread())
