@@ -9,11 +9,11 @@ import retrofit2.converter.gson.GsonConverterFactory
 import rx.Observable
 import java.util.concurrent.TimeUnit
 
-class UrlShortener {
+public class UrlShortener {
 
-    companion object {
+    public companion object {
 
-        @JvmStatic fun shortenUrl(context: Context, url: String): Observable<ResponseModel> {
+        @JvmStatic public fun shortenUrl(context: Context, url: String): Observable<ResponseModel> {
             return createNetworkServiceVideo(context).shortenUrl(context.getString(R.string.google_api_key), RequestModel(url))
         }
 
