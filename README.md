@@ -3,9 +3,22 @@
 
 ## Introduction
 
-Shortens url a url.
+Shortens url using [google shortener service](https://developers.google.com/url-shortener/).
 
-## [How to use]()
+## [How to use](https://github.com/kibotu/UrlShortener/blob/master/app/src/main/java/net/kibotu/urlshortener/app/MainActivity.java#L21-L26)
+
+1) Update [Google Api Key](https://developers.google.com/url-shortener/v1/getting_started#APIKey) in your [string.xml](https://github.com/kibotu/UrlShortener/blob/master/lib/src/main/res/values/strings.xml)
+
+       <string name="google_api_key">my-google-api-key</string>
+
+2) Request shortened url
+
+       UrlShortener.shortenUrl(this, "http://www.google.com")
+                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(response -> {
+                        Log.v(TAG, "shortened url=" + response.id);
+                    }, Throwable::printStackTrace);
 
 
 ## How to install
@@ -23,8 +36,8 @@ Shortens url a url.
 #### Build Requirements
 
 - JDK7, JDK8
-- Android Build Tools 24.0.3
-- Android SDK 24
+- Android Build Tools 25.0.1
+- Android SDK 25
 
 ## Contributors
 
