@@ -388,7 +388,7 @@ afterEvaluate {
         if (it.name.startsWith("compile") && it.name.endsWith("Kotlin")) {
             it.doLast {
                 println "Dynamically reset compileDebugJava's UP-TO-DATE flag"
-                // tasks["compileDebugJava"].outputs.upToDateWhen { false }
+                tasks["compileDebugJava"].outputs.upToDateWhen { false }
             }
         }
     }
