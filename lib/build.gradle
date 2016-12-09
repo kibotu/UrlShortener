@@ -1,5 +1,6 @@
 apply plugin: 'com.android.library'
 apply plugin: 'me.tatarka.retrolambda'
+apply plugin: 'android-apt'
 apply plugin: 'com.getkeepsafe.dexcount'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'kotlin-android'
@@ -51,15 +52,20 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+
+        //enable incremental compilation
+        incremental = true
     }
 
     lintOptions {
-        checkReleaseBuilds false
-        abortOnError false
-        ignoreWarnings true
         disable 'InvalidPackage'
+        abortOnError false        // true by default
+        checkAllWarnings false
+        checkReleaseBuilds false
+        ignoreWarnings true       // false by default
+        quiet true                // false by default
     }
 
     packagingOptions {
@@ -93,7 +99,7 @@ android {
     }
 
     kapt {
-        generateStubs = false
+        generateStubs = true
     }
 
     // endregion
@@ -123,11 +129,11 @@ dependencies {
 
 // region retrolambda
 
-retrolambda {
-    jvmArgs '-noverify'
-    defaultMethods false
-    incremental true
-}
+//retrolambda {
+//    jvmArgs '-noverify'
+//    defaultMethods false
+//    incremental true
+//}
 
 // endregion
 
@@ -137,6 +143,9 @@ retrolambda {
 task sourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
     classifier = 'sources'
+
+    // NEW LINE HERE !!!
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
 }
 
 task javadoc(type: Javadoc) {
@@ -180,32 +189,36 @@ dexcount {
 
 // https://github.com/android/platform_packages_apps_settings/blob/master/AndroidManifest.xml
 //noinspection GroovyAssignabilityCheck
-task settings() << {
-    description = "adb shell am start -a android.settings.SETTINGS"
-    println(description)
-    final def stdout = new ByteArrayOutputStream()
-    exec {
-        executable android.getAdbExe().toString()
-        args = ['shell', 'am', 'start', '-a', 'android.settings.SETTINGS']
-        standardOutput = stdout;
-    }
-    final def result = stdout.toString().trim();
+task settings() {
+    doLast {
+        description = "adb shell am start -a android.settings.SETTINGS"
+        println(description)
+        final def stdout = new ByteArrayOutputStream()
+        exec {
+            executable android.getAdbExe().toString()
+            args = ['shell', 'am', 'start', '-a', 'android.settings.SETTINGS']
+            standardOutput = stdout;
+        }
+        final def result = stdout.toString().trim();
 
-    println(result)
+        println(result)
+    }
 }
 
 //noinspection GroovyAssignabilityCheck
-task devSettings() << {
-    description = "adb shell am start -n com.android.settings/.DevelopmentSettings"
-    println(description)
-    final def stdout = new ByteArrayOutputStream()
-    exec {
-        executable android.getAdbExe().toString()
-        args = ['shell', 'am', 'start', '-n', 'com.android.settings/.DevelopmentSettings']
-        standardOutput = stdout;
+task devSettings() {
+    doLast {
+        description = "adb shell am start -n com.android.settings/.DevelopmentSettings"
+        println(description)
+        final def stdout = new ByteArrayOutputStream()
+        exec {
+            executable android.getAdbExe().toString()
+            args = ['shell', 'am', 'start', '-n', 'com.android.settings/.DevelopmentSettings']
+            standardOutput = stdout;
+        }
+        final def result = stdout.toString().trim();
+        println(result)
     }
-    final def result = stdout.toString().trim();
-    println(result)
 }
 
 // endregion
@@ -213,21 +226,18 @@ task devSettings() << {
 // region versioning
 
 //noinspection GroovyAssignabilityCheck
-task printCommitCount() << {
-    commitCount()
+task printCommitCount() {
+    doLast { commitCount() }
 }
 
 //noinspection GroovyAssignabilityCheck
-task printBranchname() << {
-    branchName()
+task printBranchname() {
+    doLast { branchName() }
 }
 
 //noinspection GroovyAssignabilityCheck
-task printGitLog() << {
-    gitLog()
-}
-repositories {
-    mavenCentral()
+task printGitLog() {
+    doLast { gitLog() }
 }
 
 def gitLog() {
@@ -372,3 +382,14 @@ def escape(Object value) {
 
 // endregion
 
+afterEvaluate {
+    def tasks = it.tasks
+    tasks.each {
+        if (it.name.startsWith("compile") && it.name.endsWith("Kotlin")) {
+            it.doLast {
+                println "Dynamically reset compileDebugJava's UP-TO-DATE flag"
+                // tasks["compileDebugJava"].outputs.upToDateWhen { false }
+            }
+        }
+    }
+}

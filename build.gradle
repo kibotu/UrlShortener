@@ -1,8 +1,9 @@
 buildscript {
-    ext.kotlin_version = '1.0.5-2'
+    ext.kotlin_version = '1.1-M02-8'
     repositories {
         jcenter()
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev/' }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.2.3'
@@ -18,15 +19,50 @@ buildscript {
     // Exclude the version that the android plugin depends on.
     configurations.classpath.exclude group: 'com.android.tools.external.lombok'
 }
+
 allprojects {
     repositories {
         jcenter()
         maven { url "https://jitpack.io" }
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev/' }
+    }
+
+    tasks.withType(JavaCompile) {
+        configure(options) {
+            incremental = true
+        }
+        // Try to turn them all off automatically
+        options.compilerArgs << '-Xlint:none'
+        options.compilerArgs << '-nowarn' // same as '-Xlint:none'
+
+        // Turn them off manually
+        options.compilerArgs << '-Xlint:-auxiliaryclass'
+        options.compilerArgs << '-Xlint:-cast'
+        options.compilerArgs << '-Xlint:-classfile'
+        options.compilerArgs << '-Xlint:-deprecation'
+        options.compilerArgs << '-Xlint:-dep-ann'
+        options.compilerArgs << '-Xlint:-divzero'
+        options.compilerArgs << '-Xlint:-empty'
+        options.compilerArgs << '-Xlint:-fallthrough'
+        options.compilerArgs << '-Xlint:-finally'
+        options.compilerArgs << '-Xlint:-options'
+        options.compilerArgs << '-Xlint:-overloads'
+        options.compilerArgs << '-Xlint:-overrides'
+        options.compilerArgs << '-Xlint:-path'
+        options.compilerArgs << '-Xlint:-processing'
+        options.compilerArgs << '-Xlint:-rawtypes'
+        options.compilerArgs << '-Xlint:-serial'
+        options.compilerArgs << '-Xlint:-static'
+        options.compilerArgs << '-Xlint:-try'
+        options.compilerArgs << '-Xlint:-unchecked'
+        options.compilerArgs << '-Xlint:-varargs'
     }
 }
+
 task wrapper(type: Wrapper) {
     gradleVersion = '3.2.1'
 }
+
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
