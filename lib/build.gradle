@@ -123,6 +123,8 @@ dependencies {
     compile 'io.reactivex:rxandroid:1.2.1'
 
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
+    retrolambdaConfig 'net.orfjackal.retrolambda:retrolambda:2.3.0'
 }
 
 // endregion
@@ -381,17 +383,3 @@ def escape(Object value) {
 }
 
 // endregion
-
-afterEvaluate {
-
-    def variants = project.android.libraryVariants + project.android.testVariants
-
-    variants.each { var ->
-        def kotlinTask = tasks["compile${var.name.capitalize()}Kotlin"]
-
-        kotlinTask.doLast {
-            println "Dynamically reset compile${var.name.capitalize()}Java's UP-TO-DATE flag"
-            tasks["compile${var.name.capitalize()}Java"].outputs.upToDateWhen { false }
-        }
-    }
-}
