@@ -52,8 +52,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
 
         //enable incremental compilation
         incremental = true
@@ -383,13 +383,15 @@ def escape(Object value) {
 // endregion
 
 afterEvaluate {
-    def tasks = it.tasks
-    tasks.each {
-        if (it.name.startsWith("compile") && it.name.endsWith("Kotlin")) {
-            it.doLast {
-                println "Dynamically reset compileDebugJava's UP-TO-DATE flag"
-                tasks["compileDebugJava"].outputs.upToDateWhen { false }
-            }
+
+    def variants = project.android.libraryVariants + project.android.testVariants
+
+    variants.each { var ->
+        def kotlinTask = tasks["compile${var.name.capitalize()}Kotlin"]
+
+        kotlinTask.doLast {
+            println "Dynamically reset compile${var.name.capitalize()}Java's UP-TO-DATE flag"
+            tasks["compile${var.name.capitalize()}Java"].outputs.upToDateWhen { false }
         }
     }
 }
