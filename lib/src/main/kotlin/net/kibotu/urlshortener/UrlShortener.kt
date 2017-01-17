@@ -9,36 +9,55 @@ import retrofit2.converter.gson.GsonConverterFactory
 import rx.Observable
 import java.util.concurrent.TimeUnit
 
-public class UrlShortener {
+/**
+ * Created by [Jan Rabe](https://about.me/janrabe).
+ */
 
-    public companion object {
+class UrlShortener {
 
-        @JvmStatic public fun shortenUrl(context: Context, url: String): Observable<ResponseModel> {
-            return createNetworkServiceVideo(context).shortenUrl(context.getString(R.string.google_api_key), RequestModel(url))
+    companion object {
+
+        @JvmStatic var enableLogging: Boolean = false
+
+        private val okHttpClient: OkHttpClient by lazy {
+            OkHttpClient.Builder()
+                    .connectTimeout(60, TimeUnit.SECONDS)
+                    .readTimeout(60, TimeUnit.SECONDS)
+                    .writeTimeout(60, TimeUnit.SECONDS)
+                    .addInterceptor(HttpLoggingInterceptor().apply {
+                        level = if (enableLogging)
+                            HttpLoggingInterceptor.Level.BODY
+                        else
+                            HttpLoggingInterceptor.Level.NONE
+                    })
+                    .build()
         }
 
-        private fun createNetworkServiceVideo(context: Context): GoogleService {
-
-            val interceptor = HttpLoggingInterceptor()
-            interceptor.level = if (BuildConfig.DEBUG)
-                HttpLoggingInterceptor.Level.BODY
-            else
-                HttpLoggingInterceptor.Level.NONE
-
-            val client = OkHttpClient.Builder()
-                    .readTimeout(60, TimeUnit.SECONDS)
-                    .connectTimeout(60, TimeUnit.SECONDS)
-                    .addInterceptor(interceptor)
+        private val tinyUrlService: TinyUrlService by lazy {
+            Retrofit.Builder()
+                    .baseUrl("http://tinyurl.com/")
+                    .client(okHttpClient)
+                    .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                     .build()
+                    .create(TinyUrlService::class.java)
+        }
 
-            val retrofit = Retrofit.Builder()
-                    .baseUrl(context.getString(R.string.base_url))
-                    .client(client)
+        private val googleService: GoogleService by lazy {
+            Retrofit.Builder()
+                    .baseUrl("https://www.googleapis.com/")
+                    .client(okHttpClient)
                     .addConverterFactory(GsonConverterFactory.create())
                     .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                     .build()
+                    .create(GoogleService::class.java)
+        }
 
-            return retrofit.create(GoogleService::class.java)
+        @JvmStatic fun shortenUrlByGoogle(context: Context, url: String): Observable<ResponseModel> {
+            return googleService.shortenUrl(context.getString(R.string.google_api_key), RequestModel(url))
+        }
+
+        @JvmStatic fun shortenUrlByTinyUrl(url: String): Observable<String> {
+            return tinyUrlService.shortenUrl(url).flatMap { Observable.just(it.source().readUtf8Line()) }
         }
     }
 }

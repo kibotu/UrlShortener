@@ -4,7 +4,7 @@ apply plugin: 'android-apt'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.1"
+    buildToolsVersion "25.0.2"
     defaultConfig {
         applicationId "net.kibotu.urlshortener.app"
         minSdkVersion 15
@@ -50,45 +50,12 @@ android {
         ignoreWarnings true
         disable 'InvalidPackage'
     }
-
-    packagingOptions {
-        exclude 'META-INF/maven/com.google.guava/guava/pom.properties'
-        exclude 'META-INF/maven/com.google.guava/guava/pom.xml'
-        exclude 'META-INF/DEPENDENCIES'
-        exclude 'META-INF/NOTICE'
-        exclude 'META-INF/LICENSE'
-        exclude 'META-INF/LICENSE.txt'
-        exclude 'META-INF/NOTICE.txt'
-        exclude 'META-INF/ASL2.0'
-        exclude 'META-INF/services/javax.annotation.processing.Processor'  // butterknife
-        exclude 'META-INF/NOTICE'
-        exclude 'META-INF/notice.txt'
-        exclude 'META-INF/license.txt'
-        exclude 'META-INF/dependencies.txt'
-        exclude 'META-INF/LGPL2.1'
-    }
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':lib')
-    compile 'com.android.support:appcompat-v7:25.0.1'
-
-    // device utils
-    compile 'com.github.kibotu:net.kibotu.android.deviceinfo:1.2.1'
-
-    // view utils
-    compile 'com.github.kibotu:common.android.utils:0.6.9'
-
-    // linq
-    compile 'br.com.zbra:android-linq:1.0.1'
-
-    // view binding
-    compile 'com.jakewharton:butterknife:8.4.0'
-    apt 'com.jakewharton:butterknife-compiler:8.4.0'
-
-    // chart
-    compile 'com.jjoe64:graphview:4.2.1'
+    compile 'com.android.support:appcompat-v7:25.1.0'
 
 }
 

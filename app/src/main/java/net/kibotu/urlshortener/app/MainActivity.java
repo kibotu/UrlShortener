@@ -18,11 +18,20 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        UrlShortener.shortenUrl(this, "http://www.google.com")
+        UrlShortener.setEnableLogging(true);
+
+        UrlShortener.shortenUrlByTinyUrl("http://www.google.com")
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(r -> {
-                    Log.v(TAG, "[onCreate] " + r);
+                    Log.v(TAG, "[onCreate] shortenUrlByTinyUrl " + r);
+                }, Throwable::printStackTrace);
+
+        UrlShortener.shortenUrlByGoogle(this, "http://www.google.com")
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(r -> {
+                    Log.v(TAG, "[onCreate] shortenUrlByGoogle " + r);
                 }, Throwable::printStackTrace);
     }
 }

@@ -1,8 +1,9 @@
 package net.kibotu.urlshortener
 
 /**
- * Created by <a href="https://about.me/janrabe">Jan Rabe</a>.
+ * Created by [Jan Rabe](https://about.me/janrabe).
  */
+
 data class RequestModel(
-        var longUrl: String = ""
+        var longUrl: String? = null
 )

@@ -13,13 +13,27 @@ Shortens url using [google shortener service](https://developers.google.com/url-
 
 2) [Request shortened url](https://github.com/kibotu/UrlShortener/blob/master/app/src/main/java/net/kibotu/urlshortener/app/MainActivity.java#L21-L26)
 
-       UrlShortener.shortenUrl(this, "http://www.google.com")
-                    .subscribeOn(Schedulers.newThread())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(response -> {
-                        Log.v(TAG, "shortened url=" + response.id);
-                    }, Throwable::printStackTrace);
+Using TinyUrl Service
 
+         UrlShortener.shortenUrlByTinyUrl("http://www.google.com")
+                 .subscribeOn(Schedulers.newThread())
+                 .observeOn(AndroidSchedulers.mainThread())
+                 .subscribe(r -> {
+                     Log.v(TAG, "[onCreate] shortenUrlByTinyUrl " + r);
+                 }, Throwable::printStackTrace);
+
+Using Google Shortener Service (Requires API Key)
+
+         UrlShortener.shortenUrlByGoogle(this, "http://www.google.com")
+                 .subscribeOn(Schedulers.newThread())
+                 .observeOn(AndroidSchedulers.mainThread())
+                 .subscribe(r -> {
+                     Log.v(TAG, "[onCreate] shortenUrlByGoogle " + r);
+                 }, Throwable::printStackTrace);
+
+(Optional) enable logging
+
+       UrlShortener.setEnableLogging(true);
 
 ## How to install
 
@@ -35,8 +49,7 @@ Shortens url using [google shortener service](https://developers.google.com/url-
     
 #### Build Requirements
 
-- JDK7, JDK8
-- Android Build Tools 25.0.1
+- Android Build Tools 25.0.2
 - Android SDK 25
 
 ## Contributors
